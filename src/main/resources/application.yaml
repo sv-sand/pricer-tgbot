@@ -1,11 +1,11 @@
 debug: false
 
 spring:
-  application.name: pricer-tgbot
+  application.name: tgbot
   output.ansi.enabled: ALWAYS
   datasource:
-    url: jdbc:postgresql://localhost:5432/pricer
     driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://pricer-db:5432/pricer
     username: ${DB_USER}
     password: ${DB_PASSWORD}
   jpa:
@@ -20,9 +20,9 @@ logging:
     org.hibernate: ERROR
   file:
     path: ./logs
+    max-history: 5
     max-size: 10MB
     total-size-cap: 100MB
-    max-history: 5
 
 bot:
   token: ${TGBOT_PRICER_TOKEN}
