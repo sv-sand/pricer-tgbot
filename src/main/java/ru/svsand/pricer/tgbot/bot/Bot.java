@@ -76,6 +76,7 @@ public class Bot implements SpringLongPollingBot, LongPollingSingleThreadUpdateC
 				.command(new BotCommand("/searches_list", "Список всех поисков"))
 				.command(new BotCommand("/new_search", "Создать новый поиск товара"))
 				.command(new BotCommand("/delete_search", "Удалить поиск товара"))
+				.command(new BotCommand("/statistic", "Статистика поисков"))
 				.build();
 
 		try {

@@ -26,10 +26,12 @@ public class CommandService {
     private final Map<User, Command> commandsAwaitingAnswer = new HashMap<>();
 
     public CommandService() {
+        commands.put(StartCommand.ID, StartCommand.class);
         commands.put(HelpCommand.ID, HelpCommand.class);
         commands.put(NewSearchCommand.ID, NewSearchCommand.class);
         commands.put(SearchesListCommand.ID, SearchesListCommand.class);
         commands.put(DeleteSearchCommand.ID, DeleteSearchCommand.class);
+        commands.put(StatisticCommand.ID, StatisticCommand.class);
     }
 
     public SendMessage processUpdate(Update update) {
