@@ -22,13 +22,16 @@ public class HelpCommand extends CommandBase {
     @Override
     public SendMessage process(Update update) {
         String text =
-                "<b>Помощь</b>\n" +
-                "Это бот для мониторинга цен на товары в интернет-магазинах\n" +
-                "Доступные команды:\n" +
-                "/help - помощь\n" +
-                "/searches_list - список всех поисков\n" +
-                "/new_search - создать новый поиск товара\n" +
-                "/delete_search - остановить поиск";
+            "<b>Помощь</b>\n" +
+            "Это бот для мониторинга цен на товары в интернет-магазинах\n" +
+            "Доступные команды:\n" +
+            "/help - помощь\n" +
+            "/searches_list - список всех поисков\n" +
+            "/new_search - создать новый поиск товара\n" +
+            "/delete_search - остановить поиск\n" +
+            "\n" +
+            "Каждый час бот запускает поиск товаров на маркетплейсах, выбирает товары цена которых ниже желаемой, " +
+            "и отправляет уведомление пользователю.";
 
         return SendMessage.builder()
                 .chatId(update.getMessage().getFrom().getId())
