@@ -17,6 +17,10 @@ import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
+import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScope;
+import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeChat;
+import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeChatMember;
+import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
@@ -72,6 +76,7 @@ public class Bot implements SpringLongPollingBot, LongPollingSingleThreadUpdateC
 		log.info("Set menu");
 
 		SetMyCommands menu = SetMyCommands.builder()
+				.scope(new BotCommandScopeDefault())
 				.command(new BotCommand("/help", "Помощь"))
 				.command(new BotCommand("/searches_list", "Список всех поисков"))
 				.command(new BotCommand("/new_search", "Создать новый поиск товара"))
