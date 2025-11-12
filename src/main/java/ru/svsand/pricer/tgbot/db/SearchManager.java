@@ -18,23 +18,23 @@ import java.util.List;
 public class SearchManager {
 
 	@Autowired
-	SearchRepository searchesRepository;
+	SearchRepository repository;
 
 	@Transactional
 	public List<Search> findByUserId(Long UserId) {
-		return searchesRepository.findByUserId(UserId)
+		return repository.findByUserId(UserId)
 				.stream().map(SearchManager::map)
 				.toList();
 	}
 
 	@Transactional
 	public void save(@NotNull Search search) {
-		searchesRepository.save(map(search));
+		repository.save(map(search));
 	}
 
 	@Transactional
 	public void delete(@NotNull Search search) {
-		searchesRepository.delete(map(search));
+		repository.delete(map(search));
 	}
 
 	// Conversion

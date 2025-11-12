@@ -16,11 +16,11 @@ import java.util.List;
 @Service
 public class UserManager {
 	@Autowired
-	UserRepository UserRepository;
+	UserRepository repository;
 
 	@Transactional
 	public User findByTgId(Long tgId) {
-		List<UserEntity> entities = UserRepository.findByTgId(tgId);
+		List<UserEntity> entities = repository.findByTgId(tgId);
 		if (entities.isEmpty())
 			return null;
 
@@ -29,7 +29,7 @@ public class UserManager {
 
 	@Transactional
 	public User save(@NotNull User user) {
-		return map(UserRepository.save(map(user)));
+		return map(repository.save(map(user)));
 	}
 
 	// Conversion
