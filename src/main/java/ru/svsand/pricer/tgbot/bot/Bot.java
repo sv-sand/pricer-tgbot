@@ -31,8 +31,6 @@ import ru.svsand.pricer.tgbot.db.UserManager;
 public class Bot implements SpringLongPollingBot, LongPollingSingleThreadUpdateConsumer {
 	private final TelegramClient telegramClient;
 	private final String token;
-
-	@Getter
 	private BotSession session;
 
 	@Autowired
@@ -74,6 +72,10 @@ public class Bot implements SpringLongPollingBot, LongPollingSingleThreadUpdateC
 
 		SendMessage message = commandService.processUpdate(update);
 		sendMessage(message);
+	}
+
+	public boolean isRunning() {
+		return session != null && session.isRunning();
 	}
 
 	public void sendMessage(@NotNull SendMessage message) {

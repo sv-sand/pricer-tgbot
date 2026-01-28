@@ -32,7 +32,7 @@ public class Notificator {
 	public void notifyUsers() {
 		log.info("Notify users started");
 
-		if (!bot.getSession().isRunning())
+		if (!bot.isRunning())
 			return;
 
 		List<Product> products = productManager.findAllNotUserNotified();
