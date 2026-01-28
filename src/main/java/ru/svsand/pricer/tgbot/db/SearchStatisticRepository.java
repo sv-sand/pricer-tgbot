@@ -12,7 +12,7 @@ import java.util.List;
  * @since 07.11.2025
  */
 
-public interface SearchStatisticRepository extends JpaRepository<SearchStatisticEntity, Long> {
+public interface SearchStatisticRepository extends JpaRepository<SearchStatisticDao, Long> {
 
 	@Query(value =
 			"SELECT \n" +

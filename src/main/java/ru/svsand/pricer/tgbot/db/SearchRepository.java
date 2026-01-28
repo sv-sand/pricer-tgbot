@@ -9,6 +9,6 @@ import java.util.List;
  * @since 28.10.2025
  */
 
-public interface SearchRepository extends JpaRepository<SearchEntity, Long> {
-	List<SearchEntity> findByUserId(Long UserId);
+public interface SearchRepository extends JpaRepository<SearchDao, Long> {
+	List<SearchDao> findByUserId(Long UserId);
 }

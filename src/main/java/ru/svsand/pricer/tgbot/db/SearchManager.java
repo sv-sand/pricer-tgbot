@@ -20,47 +20,54 @@ public class SearchManager {
 	@Autowired
 	SearchRepository repository;
 
+	@Autowired
+	private UserManager userManager;
+
 	@Transactional
 	public List<Search> findByUserId(Long UserId) {
 		return repository.findByUserId(UserId)
-				.stream().map(SearchManager::map)
+				.stream().map(SearchManager::fromDao)
 				.toList();
 	}
 
 	@Transactional
-	public void save(@NotNull Search search) {
-		repository.save(map(search));
+	public Search save(@NotNull Search search) {
+		SearchDao dao = repository.save(toDao(search));
+		return fromDao(dao);
 	}
 
 	@Transactional
 	public void delete(@NotNull Search search) {
-		repository.delete(map(search));
+		repository.delete(toDao(search));
 	}
 
 	// Conversion
 
-	public static SearchEntity map(@NotNull Search search) {
-		SearchEntity searchEntity = new SearchEntity();
+	public static SearchDao toDao(@NotNull Search search) {
+		SearchDao searchDao = new SearchDao();
 		if (!search.isNew())
-			searchEntity.setId(search.getId());
+			searchDao.setId(search.getId());
 
-		searchEntity.setUser(UserManager.map(search.getUser()));
-		searchEntity.setStore(search.getStore().name());
-		searchEntity.setKeyWords(search.getKeyWords());
-		searchEntity.setTargetPrice(search.getTargetPrice());
-		searchEntity.setVersion(search.getVersion());
+		searchDao.setUser(UserManager.toDao(search.getUser()));
+		searchDao.setStore(search.getStore().name());
+		searchDao.setKeyWords(search.getKeyWords());
+		searchDao.setTargetPrice(search.getTargetPrice());
+		searchDao.setVersion(search.getVersion());
 
-		return searchEntity;
+		return searchDao;
 	}
 
-	public static Search map(SearchEntity searchEntity) {
+	public static Search fromDao(SearchDao searchDao) {
+		if (searchDao == null)
+			return null;
+
 		return Search.builder()
-				.id(searchEntity.getId())
-				.user(UserManager.map(searchEntity.getUser()))
-				.store(Store.valueOf(searchEntity.getStore()))
-				.keyWords(searchEntity.getKeyWords())
-				.targetPrice(searchEntity.getTargetPrice())
-				.version(searchEntity.getVersion())
+				.id(searchDao.getId())
+				.user(UserManager.fromDao(searchDao.getUser()))
+				.store(Store.valueOf(searchDao.getStore()))
+				.keyWords(searchDao.getKeyWords())
+				.targetPrice(searchDao.getTargetPrice())
+				.version(searchDao.getVersion())
 				.build();
 	}
 }

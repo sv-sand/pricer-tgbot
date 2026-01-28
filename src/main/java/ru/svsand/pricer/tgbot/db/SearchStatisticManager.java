@@ -14,6 +14,7 @@ import java.util.List;
 
 @Service
 public class SearchStatisticManager {
+
 	@Autowired
 	SearchStatisticRepository repository;
 
