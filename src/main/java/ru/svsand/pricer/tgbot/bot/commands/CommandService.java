@@ -1,5 +1,6 @@
 package ru.svsand.pricer.tgbot.bot.commands;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -22,16 +23,24 @@ import java.util.Map;
 @Service
 public class CommandService {
 
-    private final Map<String, Class<? extends CommandBase>> commands = new HashMap<>();
+    private final Map<String, Class<? extends CommandBase>> userCommands;
     private final Map<User, Command> commandsAwaitingAnswer = new HashMap<>();
 
     public CommandService() {
+        userCommands = userCommands();
+    }
+
+    private Map<String, Class<? extends CommandBase>> userCommands() {
+        Map<String, Class<? extends CommandBase>> commands = new HashMap<>();
+
         commands.put(StartCommand.ID, StartCommand.class);
         commands.put(HelpCommand.ID, HelpCommand.class);
         commands.put(NewSearchCommand.ID, NewSearchCommand.class);
         commands.put(SearchesListCommand.ID, SearchesListCommand.class);
         commands.put(DeleteSearchCommand.ID, DeleteSearchCommand.class);
         commands.put(StatisticCommand.ID, StatisticCommand.class);
+
+        return commands;
     }
 
     public SendMessage processUpdate(Update update) {
@@ -62,9 +71,9 @@ public class CommandService {
         log.info("Processing command {}", update.getMessage().getText());
 
         String commandId = defineCommandId(update.getMessage().getText());
-        if (commands.containsKey(commandId)) {
+        if (userCommands.containsKey(commandId)) {
             stopWaitingAnswer(update.getMessage().getFrom());
-            return newCommand(commands.get(commandId))
+            return newCommand(userCommands.get(commandId))
                     .process(update);
         } else {
             return new UnknownCommand(this)
@@ -88,8 +97,8 @@ public class CommandService {
         log.info("Processing callback {}", update.getCallbackQuery().getData());
 
         String commandId = defineCommandId(update.getCallbackQuery().getData());
-        if (commands.containsKey(commandId)) {
-            return newCommand(commands.get(commandId))
+        if (userCommands.containsKey(commandId)) {
+            return newCommand(userCommands.get(commandId))
                     .processCallback(update);
         } else {
             return new UnknownCommand(this)
