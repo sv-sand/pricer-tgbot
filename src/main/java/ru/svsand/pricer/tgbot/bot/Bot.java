@@ -66,13 +66,8 @@ public class Bot implements SpringLongPollingBot, LongPollingSingleThreadUpdateC
 
 	@Override
 	public void consume(Update update) {
-		log.info("Update received {}", update);
-
-		if (update.hasMessage())
-			registerUser(update.getMessage().getFrom());
-		else
-			registerUser(update.getCallbackQuery().getFrom());
-
+		log.info("Update received");
+		registerUser(update);
 		SendMessage response = commandService.processUpdate(update);
 		sendMessage(response);
 	}
@@ -99,10 +94,19 @@ public class Bot implements SpringLongPollingBot, LongPollingSingleThreadUpdateC
 		}
 	}
 
-	private void registerUser(org.telegram.telegrambots.meta.api.objects.User user) {
-		if (userManager.findByTgId(user.getId()) != null)
-			return;
+	private org.telegram.telegrambots.meta.api.objects.User getTelegramUserFromUpdate(Update update) {
+		if (update.hasMessage())
+			return update.getMessage().getFrom();
+		else
+			return update.getCallbackQuery().getFrom();
+	}
 
-		userManager.save(BotObjectMapper.fromDto(user));
+	private User registerUser(Update update) {
+		org.telegram.telegrambots.meta.api.objects.User tgUser = getTelegramUserFromUpdate(update);
+		User user = userManager.findByTgId(tgUser.getId());
+		if (user != null)
+			return user;
+
+		return userManager.save(BotObjectMapper.fromDto(tgUser));
 	}
 }
