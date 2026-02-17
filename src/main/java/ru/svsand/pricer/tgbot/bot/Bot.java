@@ -14,9 +14,10 @@ import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import ru.svsand.pricer.tgbot.logic.User;
+import org.telegram.telegrambots.meta.generics.TelegramClient;
 import ru.svsand.pricer.tgbot.bot.commands.CommandService;
 import ru.svsand.pricer.tgbot.db.UserManager;
+import ru.svsand.pricer.tgbot.logic.User;
 
 /**
  * @author sand <sve.snd@gmail.com>
@@ -35,12 +36,12 @@ public class Bot implements SpringLongPollingBot, LongPollingSingleThreadUpdateC
 	@Autowired
 	public Bot(
 			@Value("${bot.token}") String token,
-			BotClient botClient,
+			BotClient client,
 			CommandService commandService,
 			UserManager userManager
 	) {
 		this.token = token;
-		this.client = botClient;
+		this.client = client;
 		this.commandService = commandService;
 		this.userManager = userManager;
 	}
@@ -79,7 +80,7 @@ public class Bot implements SpringLongPollingBot, LongPollingSingleThreadUpdateC
 	public void sendMessage(@NotNull SendMessage message) {
 		log.info("Send message {}", message.getText());
 		try {
-			client.sendMessage(message);
+			client.execute(message);
 		} catch (TelegramApiException e) {
 			log.error("Failed to send message", e);
 		}
@@ -88,7 +89,7 @@ public class Bot implements SpringLongPollingBot, LongPollingSingleThreadUpdateC
 	private void setMenu(SetMyCommands commands) {
 		log.info("Set bot command set");
 		try {
-			client.setMenu(commands);
+			client.execute(commands);
 		} catch (TelegramApiException e) {
 			log.error("Failed to set bot menu", e);
 		}

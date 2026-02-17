@@ -23,7 +23,7 @@ public class ProductManager {
 	private SearchManager searchManager;
 
 	@Transactional
-	public List<Product> findAllNotUserNotified() {
+	public List<Product> findAllForNotify() {
 		return repository.findByUserNotified(false)
 				.stream()
 				.map(ProductManager::fromDao)
@@ -62,7 +62,7 @@ public class ProductManager {
 		productDao.setStoreProductId(product.getStoreProductId());
 		productDao.setStoreProductLink(product.getStoreProductLink());
 		productDao.setPrice(product.getPrice());
-		productDao.setUserNotified(product.isUserNotified());
+		productDao.setUserNotified(product.getUserNotified());
 		productDao.setVersion(product.getVersion());
 
 		return productDao;

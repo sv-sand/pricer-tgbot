@@ -32,10 +32,12 @@ public class Notificator {
 	public void notifyUsers() {
 		log.info("Notify users started");
 
-		if (!bot.isRunning())
+		if (!bot.isRunning()) {
+			log.info("Bot is not running, skipping notification");
 			return;
+		}
 
-		List<Product> products = productManager.findAllNotUserNotified();
+		List<Product> products = productManager.findAllForNotify();
 		Map<User, List<Product>> productMap = products.stream()
 				.collect(Collectors.groupingBy(Product::getUser));
 

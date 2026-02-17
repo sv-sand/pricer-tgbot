@@ -17,7 +17,7 @@ public class Search {
 
 	private Store store;
 	private String keyWords;
-	private double targetPrice;
+	private Double targetPrice;
 	private User user;
 
 	private Long version;
@@ -27,6 +27,9 @@ public class Search {
 	}
 
 	public String getRepresentation() {
+		if (keyWords == null || targetPrice == null) {
+			return "<undefined>";
+		}
 		return String.format("%s - %.2f₽", keyWords, targetPrice);
 	}
 }

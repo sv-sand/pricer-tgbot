@@ -2,9 +2,7 @@ package ru.svsand.pricer.tgbot.bot;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.telegram.telegrambots.longpolling.BotSession;
 import org.telegram.telegrambots.longpolling.interfaces.LongPollingUpdateConsumer;
@@ -47,6 +45,7 @@ class BotTest {
 
 	@Test
 	void getBotToken() {
+		// Act
 		bot = new Bot("bot_token", client, commandService, userManager);
 		assertEquals("bot_token", bot.getBotToken());
 	}
@@ -58,7 +57,7 @@ class BotTest {
 		);
 
 		// Arrange
-		doNothing().when(client).setMenu(any(SetMyCommands.class));
+		when(client.execute(any(SetMyCommands.class))).thenReturn(null);
 		when(session.isRunning()).thenReturn(true);
 
 		// Act
@@ -79,7 +78,27 @@ class BotTest {
 
 		// Act & Assert
 		assertFalse(bot.isRunning());
-		verify(client, times(0)).setMenu(any());
+		verify(client, times(0)).execute(any(SendMessage.class));
+	}
+
+	@Test
+	void afterRegistration_ErrorSetMenu() throws TelegramApiException {
+		List<String> expectedCommands = List.of(
+				"/help", "/searches_list", "/new_search", "/delete_search", "/statistic"
+		);
+
+		// Arrange
+		when(session.isRunning()).thenReturn(true);
+		doThrow(new TelegramApiException("Test exception"))
+				.when(client)
+				.execute(any(SetMyCommands.class));
+
+		// Act
+		bot.afterRegistration(session);
+
+		// Assert
+		assertTrue(bot.isRunning());
+		checkCall_Client_SetMenu(expectedCommands);
 	}
 
 	@Test
@@ -99,10 +118,32 @@ class BotTest {
 		SendMessage response = new SendMessage("123", "Response message");
 
 		// Arrange
+		when(userManager.findByTgId(anyLong())).thenReturn(user);
+		when(commandService.processUpdate(any(Update.class))).thenReturn(response);
+		when(client.execute(any(SendMessage.class))).thenReturn(null);
+
+		// Act
+		bot.consume(update);
+
+		// Assert
+		verify(userManager, times(1)).findByTgId(101L);
+		verify(userManager, times(0)).save(user);
+		verify(commandService, times(1)).processUpdate(update);
+		verify(client, times(1)).execute(response);
+	}
+
+	@Test
+	void consume_NewUser() throws TelegramApiException {
+		User user = createUser();
+		org.telegram.telegrambots.meta.api.objects.User userDto = createUserDto();
+		Update update = createMessageUpdate(userDto);
+		SendMessage response = new SendMessage("123", "Response message");
+
+		// Arrange
 		when(userManager.findByTgId(anyLong())).thenReturn(null);
 		when(userManager.save(any(User.class))).thenReturn(null);
 		when(commandService.processUpdate(any(Update.class))).thenReturn(response);
-		doNothing().when(client).sendMessage(any(SendMessage.class));
+		when(client.execute(any(SendMessage.class))).thenReturn(null);
 
 		// Act
 		bot.consume(update);
@@ -111,7 +152,7 @@ class BotTest {
 		verify(userManager, times(1)).findByTgId(101L);
 		verify(userManager, times(1)).save(user);
 		verify(commandService, times(1)).processUpdate(update);
-		verify(client, times(1)).sendMessage(response);
+		verify(client, times(1)).execute(response);
 	}
 
 	@Test
@@ -125,7 +166,7 @@ class BotTest {
 		when(userManager.findByTgId(anyLong())).thenReturn(null);
 		when(userManager.save(any(User.class))).thenReturn(null);
 		when(commandService.processUpdate(any(Update.class))).thenReturn(response);
-		doNothing().when(client).sendMessage(any(SendMessage.class));
+		when(client.execute(any(SendMessage.class))).thenReturn(null);
 
 		// Act
 		bot.consume(update);
@@ -134,7 +175,7 @@ class BotTest {
 		verify(userManager, times(1)).findByTgId(101L);
 		verify(userManager, times(1)).save(user);
 		verify(commandService, times(1)).processUpdate(update);
-		verify(client, times(1)).sendMessage(response);
+		verify(client, times(1)).execute(response);
 	}
 
 	@Test
@@ -148,7 +189,7 @@ class BotTest {
 		when(userManager.findByTgId(anyLong())).thenReturn(null);
 		when(userManager.save(any(User.class))).thenReturn(null);
 		when(commandService.processUpdate(any(Update.class))).thenReturn(response);
-		doThrow(new TelegramApiException("API Error")).when(client).sendMessage(any(SendMessage.class));
+		doThrow(new TelegramApiException("API Error")).when(client).execute(any(SendMessage.class));
 
 		// Act
 		bot.consume(update);
@@ -157,14 +198,14 @@ class BotTest {
 		verify(userManager, times(1)).findByTgId(101L);
 		verify(userManager, times(1)).save(user);
 		verify(commandService, times(1)).processUpdate(update);
-		verify(client, times(1)).sendMessage(response);
+		verify(client, times(1)).execute(response);
 	}
 
 	// Checks
 
 	private void checkCall_Client_SetMenu(List<String> expectedCommands) throws TelegramApiException {
 		ArgumentCaptor<SetMyCommands> captor = ArgumentCaptor.forClass(SetMyCommands.class);
-		verify(client, times(1)).setMenu(captor.capture());
+		verify(client, times(1)).execute(captor.capture());
 
 		assertNotNull(captor.getValue());
 		List<BotCommand> commands = captor.getValue().getCommands();

@@ -20,8 +20,8 @@ public class Product {
 	private Search search;
 	private Long storeProductId;
 	private String storeProductLink;
-	private double price;
-	private boolean userNotified;
+	private Double price;
+	private Boolean userNotified;
 
 	private Long version;
 
@@ -30,6 +30,9 @@ public class Product {
 	}
 
 	public String getRepresentationHtml() {
+		if (storeProductLink == null || name == null || price == null) {
+			return "<undefined>";
+		}
 		return String.format("<a href=\"%s\">%s</a> - %.2f₽", storeProductLink, name, price);
 	}
 
