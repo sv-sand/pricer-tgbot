@@ -16,7 +16,7 @@ class BotObjectMapperTest {
 	@Test
 	void fromDto() {
 		// Arrange
-		org.telegram.telegrambots.meta.api.objects.User telegramUser = Data.telegramUser();
+		org.telegram.telegrambots.meta.api.objects.User telegramUser = Data.tgUser();
 
 		// Act
 		User user = BotObjectMapper.fromDto(telegramUser);

@@ -23,7 +23,7 @@ public class StartCommand extends CommandBase {
     public SendMessage process(Update update) {
         return SendMessage.builder()
                 .chatId(update.getMessage().getFrom().getId())
-                .text("Привет! Для управления ботом используй меню.")
+                .text("Привет! Для управления ботом используйте меню.")
                 .parseMode(ParseMode.HTML)
                 .build();
     }
