@@ -1,9 +1,15 @@
 package ru.svsand.pricer.tgbot;
 
 import lombok.AllArgsConstructor;
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.message.Message;
+import ru.svsand.pricer.tgbot.bot.commands.CommandBase;
+import ru.svsand.pricer.tgbot.bot.commands.CommandService;
+import ru.svsand.pricer.tgbot.db.ProductDao;
+import ru.svsand.pricer.tgbot.db.SearchDao;
 import ru.svsand.pricer.tgbot.db.SearchStatisticManager;
+import ru.svsand.pricer.tgbot.db.UserDao;
 import ru.svsand.pricer.tgbot.logic.Product;
 import ru.svsand.pricer.tgbot.logic.Search;
 import ru.svsand.pricer.tgbot.logic.Store;
@@ -78,6 +84,23 @@ public class Data {
 		return update;
 	}
 
+	public static CallbackQuery tgCallbackQuery(String data) {
+		CallbackQuery callbackQuery = new CallbackQuery();
+		callbackQuery.setData(data);
+		callbackQuery.setFrom(tgUser());
+		return callbackQuery;
+	}
+
+	// Commands
+
+	public static class TestCommand extends CommandBase {
+		public static final String ID = "/test";
+
+		public TestCommand(CommandService commandService) {
+			super(commandService);
+		}
+	}
+
 	// Database objects
 
 	@AllArgsConstructor
@@ -85,6 +108,41 @@ public class Data {
 	public static class SearchStatistic implements SearchStatisticManager.SearchStatistic {
 		private int statusCode;
 		private int requestCount;
+	}
+
+	public static UserDao userDao() {
+		UserDao userDao = new UserDao();
+		userDao.setId(1L);
+		userDao.setName("test user");
+		userDao.setTgId(101L);
+		userDao.setVersion(1000L);
+		return userDao;
+	}
+
+	public static SearchDao searchDao() {
+		SearchDao searchDao = new SearchDao();
+		searchDao.setId(1L);
+		searchDao.setUser(userDao());
+		searchDao.setStore(Store.WB.name());
+		searchDao.setKeyWords("test keyword");
+		searchDao.setTargetPrice(100.0);
+		searchDao.setVersion(1000L);
+		return searchDao;
+	}
+
+	public static ProductDao productDao() {
+		ProductDao productDao = new ProductDao();
+		productDao.setId(1L);
+		productDao.setName("test product");
+		productDao.setSearch(searchDao());
+		productDao.setStore(Store.WB.name());
+		productDao.setStoreProductId(101L);
+		productDao.setStoreProductLink("https://example.com");
+		productDao.setPrice(100.0);
+		productDao.setUserNotified(false);
+		productDao.setVersion(1000L);
+
+		return productDao;
 	}
 }
 
