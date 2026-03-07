@@ -16,11 +16,12 @@ import java.util.List;
 @Service
 public class ProductManager {
 
-	@Autowired
-	private ProductRepository repository;
+	private final ProductRepository repository;
 
 	@Autowired
-	private SearchManager searchManager;
+	public ProductManager(ProductRepository repository) {
+		this.repository = repository;
+	}
 
 	@Transactional
 	public List<Product> findAllForNotify() {

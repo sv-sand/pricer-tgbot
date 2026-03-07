@@ -47,8 +47,8 @@ public class CommandService {
             return processCommand(update);
         else if (isAnswer(update))
             return processAnswer(update);
-        else if (update.hasCallbackQuery())
-            return processCallback(update);
+        //else if (update.hasCallbackQuery())
+        //    return processCallback(update);
         else
             return new UnknownCommand(this)
                     .process(update);
@@ -83,27 +83,22 @@ public class CommandService {
     private SendMessage processAnswer(Update update) {
         log.info("Processing answer {}", update.getMessage().getText());
 
-        if (commandsAwaitingAnswer.containsKey(update.getMessage().getFrom())) {
-            return commandsAwaitingAnswer.get(update.getMessage().getFrom())
-                    .processAnswer(update);
-        } else {
-            return new UnknownCommand(this)
-                    .process(update);
-        }
+        return commandsAwaitingAnswer.get(update.getMessage().getFrom())
+                .processAnswer(update);
     }
 
-    private SendMessage processCallback(Update update) {
-        log.info("Processing callback {}", update.getCallbackQuery().getData());
-
-        String commandId = defineCommandId(update.getCallbackQuery().getData());
-        if (userCommands.containsKey(commandId)) {
-            return newCommand(userCommands.get(commandId))
-                    .processCallback(update);
-        } else {
-            return new UnknownCommand(this)
-                    .process(update);
-        }
-    }
+//    private SendMessage processCallback(Update update) {
+//        log.info("Processing callback {}", update.getCallbackQuery().getData());
+//
+//        String commandId = defineCommandId(update.getCallbackQuery().getData());
+//        if (userCommands.containsKey(commandId)) {
+//            return newCommand(userCommands.get(commandId))
+//                    .processCallback(update);
+//        } else {
+//            return new UnknownCommand(this)
+//                    .process(update);
+//        }
+//    }
 
     private String defineCommandId(String text) {
         return text.split(" ")[0];

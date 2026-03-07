@@ -6,7 +6,6 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 public interface Command {
 
     String PREFIX = "/";
-    String getId();
 
     SendMessage process(Update update);
     SendMessage processCallback(Update update);

@@ -20,7 +20,7 @@ public class NewSearchCommand extends CommandBase {
 
     public static final String ID = "/new_search";
     private String keywords = "";
-    private Double price = 0.0;
+    private Double price = null;
 
     public NewSearchCommand(CommandService commandService) {
         super(commandService);
@@ -44,15 +44,23 @@ public class NewSearchCommand extends CommandBase {
                     .text("Введите желаемую цену")
                     .build();
         }
-        if (price == 0.0) {
+        if (price == null) {
+            double parsedPrice;
             try {
-                price = Double.parseDouble(update.getMessage().getText());
+                parsedPrice = Double.parseDouble(update.getMessage().getText());
             } catch (NumberFormatException e) {
                 return SendMessage.builder()
                         .chatId(update.getMessage().getFrom().getId())
                         .text("Неверный формат цены. Введите число, если есть копейки введите число c точкой")
                         .build();
             }
+            if (parsedPrice <= 0) {
+                return SendMessage.builder()
+                        .chatId(update.getMessage().getFrom().getId())
+                        .text("Цена должна быть больше 0")
+                        .build();
+            }
+            price = parsedPrice;
         }
 
         commandService.stopWaitingAnswer(update.getMessage().getFrom());

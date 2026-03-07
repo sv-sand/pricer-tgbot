@@ -30,12 +30,12 @@ public class StatisticCommand extends CommandBase {
                 .getStatistic();
 
         StringBuilder sb = new StringBuilder();
-        sb.append("<b>Статистика поисков за последние сутки:</b><BR>\n");
+        sb.append("<b>Статистика поисков за последние сутки:</b>\n");
         for (var statistic : statistics) {
             if (statistic.getStatusCode() == 200) {
-                sb.append(String.format("Успешных запросов [%s]: %s<BR>\n", statistic.getStatusCode(), statistic.getRequestCount()));
+                sb.append(String.format("Успешных запросов [%s]: %s\n", statistic.getStatusCode(), statistic.getRequestCount()));
             } else {
-                sb.append(String.format("Ошибок [%s]: %s<BR>\n", statistic.getStatusCode(), statistic.getRequestCount()));
+                sb.append(String.format("Ошибок [%s]: %s\n", statistic.getStatusCode(), statistic.getRequestCount()));
             }
         }
 

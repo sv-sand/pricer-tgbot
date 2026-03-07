@@ -55,16 +55,24 @@ public class DeleteSearchCommand extends CommandBase {
 
     @Override
     public SendMessage processAnswer(Update update) {
-        Search search;
+        long id;
         try {
-            Long id = Long.valueOf(update.getMessage().getText());
-            search = availableSearches.get(id);
+            id = Long.parseLong(update.getMessage().getText());
         } catch (NumberFormatException e) {
             return SendMessage.builder()
                     .chatId(update.getMessage().getFrom().getId())
                     .text("Неверный ID запроса")
                     .build();
         }
+
+        Search search = availableSearches.get(id);
+        if (search == null) {
+            return SendMessage.builder()
+                    .chatId(update.getMessage().getFrom().getId())
+                    .text("Запрос не найден")
+                    .build();
+        }
+
         Context.getBean(SearchManager.class)
                 .delete(search);
 
