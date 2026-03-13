@@ -9,21 +9,25 @@ import ru.svsand.pricer.tgbot.bot.commands.CommandService;
 import ru.svsand.pricer.tgbot.db.SearchStatisticManager;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
+ * Handles the {@code /statistic} command. Displays search request statistics for the last 24 hours.
+ *
  * @author sand <sve.snd@gmail.com>
  * @since 31.05.2023
  */
-
 public class StatisticCommand extends CommandBase {
 
     public static final String ID = "/statistic";
 
+    /**
+     * @param commandService the shared command routing service
+     */
     public StatisticCommand(CommandService commandService) {
         super(commandService);
     }
 
+    /** {@inheritDoc} */
     @Override
     public SendMessage process(Update update) {
         List<SearchStatisticManager.SearchStatistic> statistics = Context.getBean(SearchStatisticManager.class)

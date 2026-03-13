@@ -6,18 +6,23 @@ import ru.svsand.pricer.tgbot.bot.commands.CommandBase;
 import ru.svsand.pricer.tgbot.bot.commands.CommandService;
 
 /**
+ * Fallback command used when no matching command is found for the user's input.
+ *
  * @author sand <sve.snd@gmail.com>
  * @since 31.05.2023
  */
-
 public class UnknownCommand extends CommandBase {
 
     public static final String ID = "/unknown";
 
+    /**
+     * @param commandService the shared command routing service
+     */
     public UnknownCommand(CommandService commandService) {
         super(commandService);
     }
 
+    /** {@inheritDoc} */
     @Override
     public SendMessage process(Update update) {
         return SendMessage.builder()

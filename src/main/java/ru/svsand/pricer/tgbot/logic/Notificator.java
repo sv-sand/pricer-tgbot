@@ -14,10 +14,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
+ * Scheduled service that periodically checks for products matching user searches
+ * and sends Telegram notifications for products not yet reported to the user.
+ *
  * @author sand <sve.snd@gmail.com>
  * @since 28.01.2026
  */
-
 @Service
 @Slf4j
 public class Notificator {
@@ -28,6 +30,11 @@ public class Notificator {
 	@Autowired
 	ProductManager productManager;
 
+	/**
+	 * Runs every 60 seconds. Finds all products pending notification, groups them by user,
+	 * sends a Telegram message to each user, and marks the products as notified.
+	 * Skips execution if the bot session is not currently running.
+	 */
 	@Scheduled(fixedRate = 60 * 1000)
 	public void notifyUsers() {
 		log.info("Notify users started");

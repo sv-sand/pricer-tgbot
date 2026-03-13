@@ -3,9 +3,6 @@ package ru.svsand.pricer.tgbot.bot.commands.impl;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import ru.svsand.pricer.tgbot.Context;
 import ru.svsand.pricer.tgbot.bot.commands.CommandBase;
 import ru.svsand.pricer.tgbot.bot.commands.CommandService;
@@ -18,18 +15,23 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
+ * Handles the {@code /searches_list} command. Displays all active searches for the current user.
+ *
  * @author sand <sve.snd@gmail.com>
  * @since 31.05.2023
  */
-
 public class SearchesListCommand extends CommandBase {
 
     public static final String ID = "/searches_list";
 
+    /**
+     * @param commandService the shared command routing service
+     */
     public SearchesListCommand(CommandService commandService) {
         super(commandService);
     }
 
+    /** {@inheritDoc} */
     @Override
     public SendMessage process(Update update) {
         User user = Context.getBean(UserManager.class)

@@ -16,19 +16,28 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
+ * Handles the {@code /delete_search} command. Shows the user's active searches and,
+ * after they reply with an ID, deletes the selected search.
+ *
  * @author sand <sve.snd@gmail.com>
  * @since 31.05.2023
  */
-
 public class DeleteSearchCommand extends CommandBase {
 
     public static final String ID = "/delete_search";
     private Map<Long, Search> availableSearches;
 
+    /**
+     * @param commandService the shared command routing service
+     */
     public DeleteSearchCommand(CommandService commandService) {
         super(commandService);
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>Lists the user's searches and registers this command as awaiting the search ID to delete.</p>
+     */
     @Override
     public SendMessage process(Update update) {
         commandService.waitAnswer(update.getMessage().getFrom(), this);
@@ -53,6 +62,10 @@ public class DeleteSearchCommand extends CommandBase {
                 .build();
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>Parses the user-provided search ID and deletes the corresponding search.</p>
+     */
     @Override
     public SendMessage processAnswer(Update update) {
         long id;

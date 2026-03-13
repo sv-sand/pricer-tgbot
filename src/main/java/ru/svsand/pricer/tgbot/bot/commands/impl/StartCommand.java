@@ -7,18 +7,23 @@ import ru.svsand.pricer.tgbot.bot.commands.CommandBase;
 import ru.svsand.pricer.tgbot.bot.commands.CommandService;
 
 /**
+ * Handles the {@code /start} command. Sends a greeting message to the user.
+ *
  * @author sand <sve.snd@gmail.com>
  * @since 31.05.2023
  */
-
 public class StartCommand extends CommandBase {
 
     public static final String ID = "/start";
 
+    /**
+     * @param commandService the shared command routing service
+     */
     public StartCommand(CommandService commandService) {
         super(commandService);
     }
 
+    /** {@inheritDoc} */
     @Override
     public SendMessage process(Update update) {
         return SendMessage.builder()

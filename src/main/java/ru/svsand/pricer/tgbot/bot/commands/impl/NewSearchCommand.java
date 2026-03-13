@@ -12,20 +12,29 @@ import ru.svsand.pricer.tgbot.logic.Store;
 import ru.svsand.pricer.tgbot.logic.User;
 
 /**
+ * Handles the {@code /new_search} command. Guides the user through a two-step dialog
+ * to collect search keywords and a target price, then persists the new search.
+ *
  * @author sand <sve.snd@gmail.com>
  * @since 31.05.2023
  */
-
 public class NewSearchCommand extends CommandBase {
 
     public static final String ID = "/new_search";
     private String keywords = "";
     private Double price = null;
 
+    /**
+     * @param commandService the shared command routing service
+     */
     public NewSearchCommand(CommandService commandService) {
         super(commandService);
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>Prompts the user to enter search keywords and registers this command as awaiting an answer.</p>
+     */
     @Override
     public SendMessage process(Update update) {
         commandService.waitAnswer(update.getMessage().getFrom(), this);
@@ -35,6 +44,11 @@ public class NewSearchCommand extends CommandBase {
                 .build();
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>Collects keywords on the first call and target price on the second.
+     * Saves the search once both values are provided.</p>
+     */
     @Override
     public SendMessage processAnswer(Update update) {
         if (keywords.isEmpty()) {

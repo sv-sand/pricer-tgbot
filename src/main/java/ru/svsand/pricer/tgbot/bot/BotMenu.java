@@ -5,11 +5,18 @@ import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
 
 /**
+ * Factory for Telegram bot menu command sets.
+ *
  * @author sand <sve.snd@gmail.com>
  * @since 28.01.2026
  */
-
 public class BotMenu {
+
+	/**
+	 * Builds the default user command menu displayed in the Telegram UI.
+	 *
+	 * @return a {@link SetMyCommands} request containing all user-facing commands
+	 */
 	public static SetMyCommands userMenu() {
 		return SetMyCommands.builder()
 				.scope(new BotCommandScopeDefault())
