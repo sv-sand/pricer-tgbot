@@ -14,16 +14,17 @@ import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import org.telegram.telegrambots.meta.generics.TelegramClient;
 import ru.svsand.pricer.tgbot.bot.commands.CommandService;
 import ru.svsand.pricer.tgbot.db.UserManager;
 import ru.svsand.pricer.tgbot.logic.User;
 
 /**
+ * Telegram long-polling bot entry point. Receives updates, auto-registers users,
+ * delegates processing to {@link CommandService}, and sends responses.
+ *
  * @author sand <sve.snd@gmail.com>
  * @since 04.11.2025
  */
-
 @Slf4j
 @Component
 public class Bot implements SpringLongPollingBot, LongPollingSingleThreadUpdateConsumer {
@@ -33,6 +34,14 @@ public class Bot implements SpringLongPollingBot, LongPollingSingleThreadUpdateC
 	private final CommandService commandService;
 	private final UserManager userManager;
 
+	/**
+	 * Constructs the bot with all required dependencies.
+	 *
+	 * @param token          the Telegram bot API token (from {@code bot.token} property)
+	 * @param client         the Telegram API client used to execute API calls
+	 * @param commandService the service that routes updates to command handlers
+	 * @param userManager    the manager used to look up or register users
+	 */
 	@Autowired
 	public Bot(
 			@Value("${bot.token}") String token,
@@ -46,11 +55,18 @@ public class Bot implements SpringLongPollingBot, LongPollingSingleThreadUpdateC
 		this.userManager = userManager;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getBotToken() {
 		return token;
 	}
 
+	/**
+	 * Called by the framework after the bot is registered. Stores the session
+	 * and sets the bot command menu if the session is running.
+	 *
+	 * @param botSession the active bot session
+	 */
 	@AfterBotRegistration
 	public void afterRegistration(BotSession botSession) {
 		log.info("Bot registered with state: {}", botSession.isRunning());
@@ -60,11 +76,18 @@ public class Bot implements SpringLongPollingBot, LongPollingSingleThreadUpdateC
 			setMenu(BotMenu.userMenu());
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public LongPollingUpdateConsumer getUpdatesConsumer() {
 		return this;
 	}
 
+	/**
+	 * Processes a single Telegram update: registers the user if new,
+	 * delegates to {@link CommandService}, and sends the response.
+	 *
+	 * @param update the incoming Telegram update
+	 */
 	@Override
 	public void consume(Update update) {
 		log.info("Update received");
@@ -73,10 +96,20 @@ public class Bot implements SpringLongPollingBot, LongPollingSingleThreadUpdateC
 		sendMessage(response);
 	}
 
+	/**
+	 * Returns {@code true} if the bot session is active and running.
+	 *
+	 * @return {@code true} if the bot is running
+	 */
 	public boolean isRunning() {
 		return session != null && session.isRunning();
 	}
 
+	/**
+	 * Sends a message via the Telegram API. Logs and swallows API errors.
+	 *
+	 * @param message the message to send; must not be {@code null}
+	 */
 	public void sendMessage(@NotNull SendMessage message) {
 		log.info("Send message {}", message.getText());
 		try {

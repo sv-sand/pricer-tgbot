@@ -6,10 +6,11 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
+ * Domain object representing a registered Telegram user.
+ *
  * @author sand <sve.snd@gmail.com>
  * @since 04.11.2025
  */
-
 @Data
 @Builder
 @ToString(of = {"name", "id", "tgId"})
@@ -21,6 +22,11 @@ public class User {
 
 	private Long version;
 
+	/**
+	 * Returns {@code true} if this user has not yet been persisted (has no database ID).
+	 *
+	 * @return {@code true} if the user is new
+	 */
 	public boolean isNew() {
 		return id == null;
 	}

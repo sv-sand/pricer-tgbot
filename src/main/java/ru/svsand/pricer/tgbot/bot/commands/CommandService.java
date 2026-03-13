@@ -13,11 +13,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This service manage the process of run commands
+ * Routes incoming Telegram updates to the appropriate {@link Command} handler.
+ * Maintains per-user state for multi-step commands that await a follow-up answer.
+ *
  * @author sand <sve.snd@gmail.com>
  * @since 04.11.2025
  */
-
 @Slf4j
 @Service
 public class CommandService {
@@ -25,6 +26,7 @@ public class CommandService {
     private final Map<String, Class<? extends CommandBase>> userCommands;
     private final Map<User, Command> commandsAwaitingAnswer = new HashMap<>();
 
+    /** Initializes the service and registers all supported user commands. */
     public CommandService() {
         userCommands = userCommands();
     }
@@ -42,6 +44,13 @@ public class CommandService {
         return commands;
     }
 
+    /**
+     * Dispatches the incoming update to the appropriate command handler.
+     * Handles commands (prefixed with {@code /}), awaited text answers, and unknown input.
+     *
+     * @param update the incoming Telegram update
+     * @return the response message to send back to the user
+     */
     public SendMessage processUpdate(Update update) {
         if (isCommand(update))
             return processCommand(update);
@@ -121,14 +130,31 @@ public class CommandService {
 
     // Await answer management
 
+    /**
+     * Returns {@code true} if the given user has a command awaiting their next text answer.
+     *
+     * @param user the Telegram user
+     * @return {@code true} if waiting for an answer from this user
+     */
     public boolean isWaitingAnswer(User user) {
         return commandsAwaitingAnswer.containsKey(user);
     }
 
+    /**
+     * Registers a command as waiting for a follow-up answer from the given user.
+     *
+     * @param user    the Telegram user whose next message should be routed to {@code command}
+     * @param command the command that is awaiting the answer
+     */
     public void waitAnswer(User user, Command command) {
         commandsAwaitingAnswer.put(user, command);
     }
 
+    /**
+     * Removes the awaiting-answer state for the given user.
+     *
+     * @param user the Telegram user whose awaiting state should be cleared
+     */
     public void stopWaitingAnswer(User user) {
         commandsAwaitingAnswer.remove(user);
     }
